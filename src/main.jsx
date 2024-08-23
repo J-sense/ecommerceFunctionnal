@@ -9,16 +9,18 @@ import {
 // import Header from './components/Header.jsx';
 import Home from './components/Home.jsx';
 import ProoductDetails from "./components/ProoductDetails.jsx"
+import ErrorPage from './components/ErrorPage.jsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App></App>,
+    errorElement:<ErrorPage></ErrorPage>,
     children:[
       {
         path: "/",
         element: <Home></Home>,
-        loader:()=>fetch('https://dummyjson.com/products')
+       
       },
       {
         path: "/product/:id",

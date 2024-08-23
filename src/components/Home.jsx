@@ -5,7 +5,7 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  useEffect(() => {
+  const fetchData =()=>{
     setLoading(true);
     fetch("https://dummyjson.com/products")
       .then((res) => {
@@ -21,6 +21,9 @@ const Home = () => {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+  }
+  useEffect(() => {
+  fetchData();
   }, []);
 
   return (
