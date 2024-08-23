@@ -8,25 +8,29 @@ const Home = () => {
   const [totalpage, setTotalpage] = useState(0);
   const [currentpage, setCurrentPage] = useState(1);
 
-  const itmesperpage = 10;
+  const itmesperpage = 15;
   const handleCurrentpage = (idx) => {
     setCurrentPage(idx + 1);
   };
   const fetchData = (currentpage) => {
     setLoading(true);
-    fetch(`https://dummyjson.com/products?limit=${itmesperpage}&skip=${(currentpage-10)*itmesperpage}`)
+    fetch(
+      `https://dummyjson.com/products?limit=${itmesperpage}&skip=${
+        (currentpage - 1) * itmesperpage
+      }`
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         } else {
-          return res.json()
+          return res.json();
         }
       })
       .then((data) => {
         setProducts(data.products);
         setTotalpage(Math.ceil(data.total / itmesperpage));
         setLoading(false);
-        console.log(totalpage); // after fetching data set loading to false to hide the loading spinner.
+        // after fetching data set loading to false to hide the loading spinner.
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -37,7 +41,7 @@ const Home = () => {
 
   return (
     <>
-      {loading && (
+      {loading ? (
         <div className="grid justify-center items-center h-[80vh]">
           <div className="">
             <span className="loading loading-ring loading-xs"></span>
@@ -46,24 +50,32 @@ const Home = () => {
             <span className="loading loading-ring loading-lg"></span>
           </div>
         </div>
+      ) : (
+        <div>
+          ({" "}
+          <div className="grid lg:grid-cols-4 px-3">
+            {products.map((product, idx) => (
+              <Product product={product} key={idx}></Product>
+            ))}
+          </div>
+          <div className="grid place-items-center mt-5 px-2">
+            <div className="flex flex-wrap gap-2 justify-center">
+              {Array.from({ length: totalpage }, (_, idx) => {
+                return (
+                  <button
+                    key={idx} // Add a key prop for better rendering performance
+                    className="border p-2 rounded border-slate-300 hover:bg-slate-200 transition-all duration-200"
+                    onClick={() => handleCurrentpage(idx)}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          )
+        </div>
       )}
-      <div className="grid lg:grid-cols-3 w-[90%] mx-auto gap-3">
-        {products.map((product, idx) => (
-          <Product product={product} key={idx}></Product>
-        ))}
-      </div>
-      <div className="mx-auto w-[90%]">
-        {Array.from({ length: totalpage }, (_, idx) => {
-          return (
-            <button
-              className="border p-2 mt-5 border border-slate-300 rounded"
-              onClick={() => handleCurrentpage(idx)}
-            >
-              {idx + 1}
-            </button>
-          );
-        })}
-      </div>
     </>
   );
 };

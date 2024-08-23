@@ -5,14 +5,14 @@ const ProoductDetails = () => {
   const { state: product } = useLocation();
   console.log(product);
   return (
-    <div className="max-w-4xl mx-auto p-6 md:p-12 bg-white rounded-lg shadow-lg">
+    <div className="max-w-4xl mx-auto p-6 md:p-12 bg-white rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="flex items-center justify-center">
           <img
             src={product.thumbnail}
             alt={product.title}
-            className="w-full h-auto object-cover rounded-lg shadow-md"
+            className="w-full h-auto object-cover rounded-lg shadow-lg"
           />
         </div>
 
@@ -81,7 +81,7 @@ const ProoductDetails = () => {
                 key={index}
                 src={img}
                 alt={`Product image ${index + 1}`}
-                className="w-full h-auto object-cover rounded-lg shadow-md"
+                className="w-64 h-auto object-cover rounded-lg shadow"
               />
             ))}
           </div>
