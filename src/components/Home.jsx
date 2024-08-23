@@ -35,6 +35,15 @@ const Home = () => {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   };
+  const handlepreviousPage =()=>{
+    if(currentpage > 1){
+      const previouspage =(currentpage - 1)
+      setCurrentPage(previouspage);
+    }
+  }
+  const handleNextPage =()=>{
+    setCurrentPage(currentpage + 1);
+  }
   useEffect(() => {
     fetchData(currentpage);
   }, [currentpage]);
@@ -52,7 +61,7 @@ const Home = () => {
         </div>
       ) : (
         <div>
-          ({" "}
+          {" "}
           <div className="grid lg:grid-cols-4 px-3">
             {products.map((product, idx) => (
               <Product product={product} key={idx}></Product>
@@ -60,6 +69,7 @@ const Home = () => {
           </div>
           <div className="grid place-items-center mt-5 px-2">
             <div className="flex flex-wrap gap-2 justify-center">
+            <button className="border btn px-3" onClick={handlepreviousPage} disabled={currentpage === 1}>Previous</button>
               {Array.from({ length: totalpage }, (_, idx) => {
                 return (
                   <button
@@ -71,9 +81,11 @@ const Home = () => {
                   </button>
                 );
               })}
+            <button className="border btn px-3" onClick={handleNextPage} disabled={currentpage===totalpage}>Next</button>
+
             </div>
           </div>
-          )
+          
         </div>
       )}
     </>
