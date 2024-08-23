@@ -5,26 +5,35 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const fetchData =()=>{
+  const [totalpage, setTotalpage] = useState(0);
+  const [currentpage, setCurrentPage] = useState(1);
+
+  const itmesperpage = 10;
+  const handleCurrentpage = (idx) => {
+    setCurrentPage(idx + 1);
+  };
+  const fetchData = (currentpage) => {
     setLoading(true);
-    fetch("https://dummyjson.com/products")
+    fetch(`https://dummyjson.com/products?limit=${itmesperpage}&skip=${(currentpage-10)*itmesperpage}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         } else {
-          return res.json();
+          return res.json()
         }
       })
       .then((data) => {
         setProducts(data.products);
-        setLoading(false); // after fetching data set loading to false to hide the loading spinner.
+        setTotalpage(Math.ceil(data.total / itmesperpage));
+        setLoading(false);
+        console.log(totalpage); // after fetching data set loading to false to hide the loading spinner.
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }
+  };
   useEffect(() => {
-  fetchData();
-  }, []);
+    fetchData(currentpage);
+  }, [currentpage]);
 
   return (
     <>
@@ -42,6 +51,18 @@ const Home = () => {
         {products.map((product, idx) => (
           <Product product={product} key={idx}></Product>
         ))}
+      </div>
+      <div className="mx-auto w-[90%]">
+        {Array.from({ length: totalpage }, (_, idx) => {
+          return (
+            <button
+              className="border p-2 mt-5 border border-slate-300 rounded"
+              onClick={() => handleCurrentpage(idx)}
+            >
+              {idx + 1}
+            </button>
+          );
+        })}
       </div>
     </>
   );
