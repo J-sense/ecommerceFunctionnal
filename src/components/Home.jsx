@@ -7,18 +7,25 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [totalpage, setTotalpage] = useState(0);
   const [currentpage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const itmesperpage = 15;
   const handleCurrentpage = (idx) => {
     setCurrentPage(idx + 1);
   };
-  const fetchData = (currentpage) => {
+ 
+  const fetchData = (currentpage, searchTerm) => {
     setLoading(true);
-    fetch(
-      `https://dummyjson.com/products?limit=${itmesperpage}&skip=${
+    let url = `https://dummyjson.com/products?limit=${itmesperpage}&skip=${
+      (currentpage - 1) * itmesperpage
+    }`;
+    if (searchTerm!="") {
+      url=`https://dummyjson.com/products/search?q=${searchTerm}&limit=${itmesperpage}&skip=${
         (currentpage - 1) * itmesperpage
       }`
-    )
+    }
+    
+    fetch(url)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -35,18 +42,24 @@ const Home = () => {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   };
-  const handlepreviousPage =()=>{
-    if(currentpage > 1){
-      const previouspage =(currentpage - 1)
+  const handlepreviousPage = () => {
+    if (currentpage > 1) {
+      const previouspage = currentpage - 1;
       setCurrentPage(previouspage);
     }
-  }
-  const handleNextPage =()=>{
+  };
+  const handleNextPage = () => {
     setCurrentPage(currentpage + 1);
-  }
+  };
+  const handlesearchItem = (e) => {
+      setSearchTerm(e.target.value);
+      console.log(searchTerm)
+      
+    
+  };
   useEffect(() => {
-    fetchData(currentpage);
-  }, [currentpage]);
+    fetchData(currentpage,searchTerm);
+  }, [currentpage, searchTerm]);
 
   return (
     <>
@@ -61,7 +74,8 @@ const Home = () => {
         </div>
       ) : (
         <div>
-          {" "}
+          <input type="text"
+           onChange={handlesearchItem} />
           <div className="grid lg:grid-cols-4 px-3">
             {products.map((product, idx) => (
               <Product product={product} key={idx}></Product>
@@ -69,7 +83,13 @@ const Home = () => {
           </div>
           <div className="grid place-items-center mt-5 px-2">
             <div className="flex flex-wrap gap-2 justify-center">
-            <button className="border btn px-3" onClick={handlepreviousPage} disabled={currentpage === 1}>Previous</button>
+              <button
+                className="border btn px-3"
+                onClick={handlepreviousPage}
+                disabled={currentpage === 1}
+              >
+                Previous
+              </button>
               {Array.from({ length: totalpage }, (_, idx) => {
                 return (
                   <button
@@ -81,11 +101,15 @@ const Home = () => {
                   </button>
                 );
               })}
-            <button className="border btn px-3" onClick={handleNextPage} disabled={currentpage===totalpage}>Next</button>
-
+              <button
+                className="border btn px-3"
+                onClick={handleNextPage}
+                disabled={currentpage === totalpage}
+              >
+                Next
+              </button>
             </div>
           </div>
-          
         </div>
       )}
     </>
