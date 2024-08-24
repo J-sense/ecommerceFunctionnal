@@ -8,13 +8,14 @@ const Home = () => {
   const [totalpage, setTotalpage] = useState(0);
   const [currentpage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortCritatria, setSortCriteria] = useState("");
 
   const itmesperpage = 15;
   const handleCurrentpage = (idx) => {
     setCurrentPage(idx + 1);
   };
 
-  const fetchData = (currentpage, searchTerm) => {
+  const fetchData = (currentpage, searchTerm, sortCritatria) => {
     setLoading(true);
     let url = `https://dummyjson.com/products?limit=${itmesperpage}&skip=${
       (currentpage - 1) * itmesperpage
@@ -23,6 +24,11 @@ const Home = () => {
       url = `https://dummyjson.com/products/search?q=${searchTerm}&limit=${itmesperpage}&skip=${
         (currentpage - 1) * itmesperpage
       }`;
+    }
+    if (sortCritatria) {
+      const splitSortCriteria = sortCritatria.split("-");
+      console.log(splitSortCriteria)
+      url +=`&sortBy=${splitSortCriteria[0]}&order=${splitSortCriteria[1]}`;
     }
 
     fetch(url)
@@ -59,9 +65,13 @@ const Home = () => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
+  const handleSorting = (e) => {
+    setSortCriteria(e.target.value);
+    console.log(sortCritatria)
+  };
   useEffect(() => {
-    fetchData(currentpage, searchTerm);
-  }, [currentpage, searchTerm]);
+    fetchData(currentpage, searchTerm, sortCritatria);
+  }, [currentpage, searchTerm, sortCritatria]);
 
   return (
     <>
@@ -79,24 +89,17 @@ const Home = () => {
           className="border border-green-300 p-2 rounded ml-2"
         />
       </div>
-      <div className="dropdown">
-        <div tabIndex={0} role="button" className="btn m-1">
-          Sort By
-        </div>
-        <ul
-          tabIndex={0}
-          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+      <div className="">
+        <select
+          className="btn m-1"
+          value={sortCritatria}
+          onChange={handleSorting}
         >
-          <li>
-            A to Z
-          </li>
-          <li>
-            High to Low
-          </li>
-          <li>
-            Low to High
-          </li>
-        </ul>
+          <option value="">Sort By</option>
+          <option value="title-asc">A to Z</option>
+          <option value="price-asc">High to Low</option>
+          <option value="price-dsc">Low to High</option>
+        </select>
       </div>
 
       {loading ? (
