@@ -13,18 +13,18 @@ const Home = () => {
   const handleCurrentpage = (idx) => {
     setCurrentPage(idx + 1);
   };
- 
+
   const fetchData = (currentpage, searchTerm) => {
     setLoading(true);
     let url = `https://dummyjson.com/products?limit=${itmesperpage}&skip=${
       (currentpage - 1) * itmesperpage
     }`;
-    if (searchTerm!="") {
-      url=`https://dummyjson.com/products/search?q=${searchTerm}&limit=${itmesperpage}&skip=${
+    if (searchTerm != "") {
+      url = `https://dummyjson.com/products/search?q=${searchTerm}&limit=${itmesperpage}&skip=${
         (currentpage - 1) * itmesperpage
-      }`
+      }`;
     }
-    
+
     fetch(url)
       .then((res) => {
         if (!res.ok) {
@@ -52,17 +52,53 @@ const Home = () => {
     setCurrentPage(currentpage + 1);
   };
   const handlesearchItem = (e) => {
-      setSearchTerm(e.target.value);
-      console.log(searchTerm)
-      
-    
+    // e.preventDefault()
+    // const input = e.target.input.value;
+    // setSearchTerm(input);
+    // setCurrentPage(1)
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
   };
   useEffect(() => {
-    fetchData(currentpage,searchTerm);
+    fetchData(currentpage, searchTerm);
   }, [currentpage, searchTerm]);
 
   return (
     <>
+      <div className="flex gap-2 my-3">
+        {/* <form onSubmit={handlesearchItem}>
+            <input type="text" name="input" className="border border-green-300 p-2 rounded ml-2"/>
+            <button type="submit" className="btn btn-info px-7 py-0">Search</button>
+          </form> */}
+        <input
+          type="text"
+          name=""
+          id=""
+          onChange={handlesearchItem}
+          placeholder="Search"
+          className="border border-green-300 p-2 rounded ml-2"
+        />
+      </div>
+      <div className="dropdown">
+        <div tabIndex={0} role="button" className="btn m-1">
+          Sort By
+        </div>
+        <ul
+          tabIndex={0}
+          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+        >
+          <li>
+            A to Z
+          </li>
+          <li>
+            High to Low
+          </li>
+          <li>
+            Low to High
+          </li>
+        </ul>
+      </div>
+
       {loading ? (
         <div className="grid justify-center items-center h-[80vh]">
           <div className="">
@@ -73,9 +109,7 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <div>
-          <input type="text"
-           onChange={handlesearchItem} />
+        <>
           <div className="grid lg:grid-cols-4 px-3">
             {products.map((product, idx) => (
               <Product product={product} key={idx}></Product>
@@ -110,7 +144,7 @@ const Home = () => {
               </button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
